@@ -32,7 +32,8 @@ def get_square_size(page_size, spacing, columns):
 # Create a Drawing object
 with Drawing() as draw:
     # Set the fill color for the square
-    draw.fill_color = Color('blue')
+    #  draw.fill_color = Color('blue')
+    draw.fill_color = Color('white')
     # Set the stroke color and width for the square's outline
     draw.stroke_color = Color('black')
     draw.stroke_width = 2
@@ -46,8 +47,9 @@ with Drawing() as draw:
     #  bottom = top + side_length
     width = 1200
     height = 2000
-    spacing = 100
-    columns = 4
+    #  spacing = 100
+    spacing = 22
+    columns = 5
     lines = 4
 
     #  for square in columns
