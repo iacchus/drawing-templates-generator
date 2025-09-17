@@ -29,6 +29,18 @@ def get_square_size(page_size, spacing, columns):
 
     return square_size
 
+def get_max_lines(page_height, spacing, square_size):
+    page_height_without_outer_margins = page_height - (spacing*2)
+
+    count = 0
+    total_size = 0
+
+    while total_size < page_height_without_outer_margins:
+        count += 1
+        total_size = (count * square_size) + ((count - 1) * spacing)
+
+    return count - 1
+
 # Create a Drawing object
 with Drawing() as draw:
     # Set the fill color for the square
@@ -50,13 +62,15 @@ with Drawing() as draw:
     #  spacing = 100
     spacing = 22
     columns = 5
-    lines = 4
+    #  lines = 4
 
     #  for square in columns
 
-    squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
-
     square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
+
+    lines = get_max_lines(page_height=height, spacing=spacing, square_size=square_size)
+
+    squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
     for square_x, square_y in squares:
         geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
