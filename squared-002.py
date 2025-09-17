@@ -4,12 +4,12 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
-def get_square_geometry(x, y, spacing):
-    size = 200
-    left = spacing * x + (x-1)*size
-    top = spacing * y + (y-1)*size
-    right = spacing * x + (x)*size
-    bottom = spacing * y + (y)*size
+def get_square_geometry(x, y, spacing, square_size):
+    #  size = 200
+    left = spacing * x + (x-1)*square_size
+    top = spacing * y + (y-1)*square_size
+    right = spacing * x + (x)*square_size
+    bottom = spacing * y + (y)*square_size
 
     geometry = dict(
             left=left,
@@ -54,8 +54,10 @@ with Drawing() as draw:
 
     squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
+    square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
+
     for square_x, square_y in squares:
-        geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing)
+        geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
         draw.rectangle(**geometry)
 
 
