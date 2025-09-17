@@ -20,6 +20,15 @@ def get_square_geometry(x, y, spacing):
 
     return geometry
 
+def get_square_size(page_size, spacing, columns):
+    outer_margin = spacing * 2
+    intermediary_total_padding = ((columns-1) * spacing)
+    spacing_total_size = outer_margin + intermediary_total_padding
+    square_total_size = page_size - spacing_total_size
+    square_size = square_total_size / columns
+
+    return square_size
+
 # Create a Drawing object
 with Drawing() as draw:
     # Set the fill color for the square
