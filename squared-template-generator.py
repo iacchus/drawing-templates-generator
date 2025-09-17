@@ -47,8 +47,8 @@ with Drawing() as draw:
 
     width = 1200
     height = 2000
-    spacing = 22
-    columns = 5
+    spacing = 11
+    columns = 4
 
     square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
 
