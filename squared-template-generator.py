@@ -43,7 +43,7 @@ def get_max_lines(page_height, spacing, square_size):
 with Drawing() as draw:
     draw.fill_color = Color('white')
     draw.stroke_color = Color('black')
-    draw.stroke_width = 2
+    draw.stroke_width = 1
 
     width = 1200
     height = 2000
