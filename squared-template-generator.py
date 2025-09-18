@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
+import glob
+
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
+
+#  def create_filename(prefix, extension):
+#      filename_wildcard = f"{prefix}-*.{extension}"
+#      files = glob.glob(filename_wildcard)
 
 def get_square_geometry(x, y, spacing, square_size):
     left = spacing * x + (x-1)*square_size
