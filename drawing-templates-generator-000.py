@@ -2,12 +2,19 @@
 
 import glob
 
+import click
+
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
+@click.group(epilog="gen")
+def template_generator():
+    pass
+
 width = 1200
 height = 2000
+resolution = 288
 spacing = 11
 columns = 4
 
@@ -51,6 +58,24 @@ def get_square_geometry(x, y, spacing, square_size):
 
     return geometry
 
+def get_circle_geometry(x, y, spacing, square_size):
+    left = spacing * x + (x-1)*square_size
+    top = spacing * y + (y-1)*square_size
+    #  right = spacing * x + (x)*square_size
+    #  bottom = spacing * y + (y)*square_size
+
+    origin_x = left + (square_size/2)
+    origin_y = top + (square_size/2)
+
+    perimeter_x = left + (square_size/2)
+    perimeter_y = top
+
+    geometry = dict(
+            origin=(origin_x, origin_y),
+            perimeter=(perimeter_x, perimeter_y)
+            )
+
+    return geometry
 def get_square_size(page_size, spacing, columns):
     outer_margin = spacing * 2
     intermediary_total_padding = ((columns-1) * spacing)
@@ -72,36 +97,90 @@ def get_max_lines(page_height, spacing, square_size):
 
     return count - 1
 
-with Drawing() as draw:
-    draw.fill_color = fill_color
-    draw.stroke_color = stroke_color
-    draw.stroke_width = stroke_width
-    #  draw.fill_color = Color('white')
-    #  draw.stroke_color = Color('black')
-    #  draw.stroke_width = 1
+#  with Drawing() as draw:
+#      draw.fill_color = fill_color
+#      draw.stroke_color = stroke_color
+#      draw.stroke_width = stroke_width
+#
+#      square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
+#
+#      lines = get_max_lines(page_height=height, spacing=spacing, square_size=square_size)
+#
+#      squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
+#
+#      for square_x, square_y in squares:
+#          geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
+#          draw.rectangle(**geometry)
+#
+#
+#      with Image(width=width, height=height, background=background) as image:
+#          draw(image)
+#
+#          filename = create_filename(prefix=filename_prefix, extension=filename_extension)
+#          image.save(filename=filename)
+#          #  image.save(filename='square.png')
 
-    #  width = 1200
-    #  height = 2000
-    #  spacing = 11
-    #  columns = 4
+def draw_and_write(shape="square", format="img"):
+    with Drawing() as draw:
+        draw.fill_color = fill_color
+        draw.stroke_color = stroke_color
+        draw.stroke_width = stroke_width
 
-    square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
+        square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
 
-    lines = get_max_lines(page_height=height, spacing=spacing, square_size=square_size)
+        lines = get_max_lines(page_height=height, spacing=spacing, square_size=square_size)
 
-    squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
+        squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
-    for square_x, square_y in squares:
-        geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
-        draw.rectangle(**geometry)
+        if shape == "square":
+            for square_x, square_y in squares:
+                geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
+                draw.rectangle(**geometry)
+        elif shape == "circle":
 
+            for square_x, square_y in squares:
+                geometry = get_circle_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
+                draw.circle(**geometry) # origin, perimeter
 
-    with Image(width=width, height=height, background=background) as image:
-        draw(image)
+        with Image(width=width,
+                   height=height,
+                   background=background,
+                   resolution=resolution) as image:
+            draw(image)
 
-        filename = create_filename(prefix=filename_prefix, extension=filename_extension)
-        image.save(filename=filename)
-        #  image.save(filename='square.png')
+            filename = create_filename(prefix=filename_prefix, extension=filename_extension)
+            image.save(filename=filename)
+            #  image.save(filename='square.png')
+width_option = click.option("-w", "--width", type=int, default=1200)
+height_option = click.option("-h", "--height", type=int, default=2000)
+spacing_option = click.option("-s", "--spacing", type=int, default=33)
+columns_option = click.option("-c", "--columns", type=int, default= 4)
+page_option = click.option("-p", "--page", type=str, default="a4")  # "a4" etc... type is Choice
+dpi_option = click.option("-d", "--dpi", type=int, default=288)  # 72, 288 etc
+shape_option = click.option("-x", "--shape", type=click.Choice(["square", "circle"], case_sensitive=False))  # square or circle
+#  format_option = click.option()  # img or pdf
 
-print("Squared template drawn and saved as", filename)
+@template_generator.command(epilog="generate image")
+@width_option
+@height_option
+@spacing_option
+@columns_option
+@page_option
+@dpi_option
+@shape_option
+def img():
+    filename_prefix = "square"
+    filename_extension = "png"
+
+@template_generator.command(epilog="generate pdf")
+@page_option
+@spacing_option
+@columns_option
+@dpi_option
+@shape_option
+def pdf():
+    filename_prefix = "square"
+    filename_extension = "pdf"
+
+#  print("Squared template drawn and saved as", filename)
 
