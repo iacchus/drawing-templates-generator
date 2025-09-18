@@ -9,4 +9,5 @@ and
 
 ### dependencies:
 
-* python wand
+* python wand (and its dependencies)
+* python click
