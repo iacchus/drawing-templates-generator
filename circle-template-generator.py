@@ -1,8 +1,40 @@
 #!/usr/bin/env python
 
+import glob
+
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
+
+width = 1200
+height = 2000
+spacing = 11
+columns = 4
+
+filename_prefix = "circle"
+filename_extension = "png"
+
+stroke_width = 2
+fill_color = Color("white")
+stroke_color = Color("black")
+background = Color("white")
+
+def get_filename_number(filename):
+    filename_without_extension = filename.split(".")[0]
+    number = filename_without_extension.split("-")[1]
+
+    return number if number.isdecimal() else -1
+
+def create_filename(prefix, extension):
+    filename_wildcard = f"{prefix}-*.{extension}"
+    files = glob.glob(filename_wildcard)
+    numbers = [int(get_filename_number(filename)) for filename in files]
+    next_number = 0
+    if numbers:
+        next_number = max(numbers) + 1
+    next_number_str = str(next_number).zfill(3)
+    filename = f"{prefix}-{next_number_str}.{extension}"
+    return filename
 
 #  def get_square_geometry(x, y, spacing, square_size):
 #      left = spacing * x + (x-1)*square_size
@@ -69,14 +101,17 @@ def get_max_lines(page_height, spacing, square_size):
     return count - 1
 
 with Drawing() as draw:
-    draw.fill_color = Color('white')
-    draw.stroke_color = Color('black')
-    draw.stroke_width = 1
+    draw.fill_color = fill_color
+    draw.stroke_color = stroke_color
+    draw.stroke_width = stroke_width
+    #  draw.fill_color = Color('white')
+    #  draw.stroke_color = Color('black')
+    #  draw.stroke_width = 1
 
-    width = 1200
-    height = 2000
-    spacing = 33
-    columns = 6
+    #  width = 1200
+    #  height = 2000
+    #  spacing = 33
+    #  columns = 6
 
     square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
 
@@ -89,9 +124,10 @@ with Drawing() as draw:
         draw.circle(**geometry) # origin, perimeter
 
 
-    with Image(width=1200, height=2000, background=Color('white')) as image:
+    with Image(width=width, height=height, background=background) as image:
         draw(image)
-        image.save(filename='circle.png')
+        filename = create_filename(prefix=filename_prefix, extension=filename_extension)
+        image.save(filename=filename)
 
-print("Circle template drawn and saved as 'circle.png'")
+print("Circle template drawn and saved as", filename)
 
