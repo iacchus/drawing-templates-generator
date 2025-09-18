@@ -11,8 +11,8 @@ page_w, page_h = PAPERSIZE_MAP["a4"]  # this size is for 72dpi
 width, height = (page_w * 4, page_h * 4)
 
 resolution = 288
-spacing = 11
-columns = 4
+spacing = 33
+columns = 6
 
 filename_prefix = "circle"
 filename_extension = "pdf"
