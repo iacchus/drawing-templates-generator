@@ -4,20 +4,21 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
-def get_square_geometry(x, y, spacing, square_size):
-    left = spacing * x + (x-1)*square_size
-    top = spacing * y + (y-1)*square_size
-    right = spacing * x + (x)*square_size
-    bottom = spacing * y + (y)*square_size
+#  def get_square_geometry(x, y, spacing, square_size):
+#      left = spacing * x + (x-1)*square_size
+#      top = spacing * y + (y-1)*square_size
+#      right = spacing * x + (x)*square_size
+#      bottom = spacing * y + (y)*square_size
+#
+#      geometry = dict(
+#              left=left,
+#              top=top,
+#              right=right,
+#              bottom=bottom
+#              )
+#
+#      return geometry
 
-    geometry = dict(
-            left=left,
-            top=top,
-            right=right,
-            bottom=bottom
-            )
-
-    return geometry
 def get_circle_geometry(x, y, spacing, square_size):
     left = spacing * x + (x-1)*square_size
     top = spacing * y + (y-1)*square_size
@@ -46,14 +47,14 @@ def get_square_size(page_size, spacing, columns):
 
     return square_size
 
-def get_circle_size(page_size, spacing, columns):
-    outer_margin = spacing * 2
-    intermediary_total_padding = ((columns-1) * spacing)
-    spacing_total_size = outer_margin + intermediary_total_padding
-    square_total_size = page_size - spacing_total_size
-    square_size = square_total_size / columns
-
-    return square_size
+#  def get_circle_size(page_size, spacing, columns):
+#      outer_margin = spacing * 2
+#      intermediary_total_padding = ((columns-1) * spacing)
+#      spacing_total_size = outer_margin + intermediary_total_padding
+#      square_total_size = page_size - spacing_total_size
+#      square_size = square_total_size / columns
+#
+#      return square_size
 
 def get_max_lines(page_height, spacing, square_size):
     page_height_without_outer_margins = page_height - (spacing*2)
@@ -74,8 +75,8 @@ with Drawing() as draw:
 
     width = 1200
     height = 2000
-    spacing = 11
-    columns = 4
+    spacing = 33
+    columns = 6
 
     square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
 
