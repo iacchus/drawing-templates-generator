@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import glob
-from ntpath import isfile
 import os
 
 import click
@@ -11,23 +10,6 @@ from wand.image import PAPERSIZE_MAP
 from wand.drawing import Drawing
 from wand.color import Color
 
-#  @click.group(epilog="gen")
-#  def template_generator():
-#      pass
-
-#  width = 1200
-#  height = 2000
-#  resolution = 288
-#  spacing = 11
-#  columns = 4
-
-#  filename_prefix = "square"
-#  filename_extension = "png"
-
-#  stroke_width = 2
-#  fill_color = Color("white")
-#  stroke_color = Color("black")
-#  background = Color("white")
 
 def get_filename_number(filename):
     filename_without_extension = filename.split(".")[0]
@@ -118,21 +100,29 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
 
         squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
-        if shape == "square":
-            for square_x, square_y in squares:
-                geometry = get_square_geometry(x=square_x,
-                                               y=square_y,
-                                               spacing=spacing,
-                                               square_size=square_size)
-                draw.rectangle(**geometry)
+        for square_x, square_y in squares:
+            square_data = dict(x=square_x,
+                               y=square_y,
+                               spacing=spacing,
+                               square_size=square_size)
 
-        elif shape == "circle":
-            for square_x, square_y in squares:
-                geometry = get_circle_geometry(x=square_x,
-                                               y=square_y,
-                                               spacing=spacing,
-                                               square_size=square_size)
-                draw.circle(**geometry) # origin, perimeter
+            if shape == "square":
+                #  for square_x, square_y in squares:
+                    #  geometry = get_square_geometry(x=square_x,
+                    #                                 y=square_y,
+                    #                                 spacing=spacing,
+                    #                                 square_size=square_size)
+                    geometry = get_square_geometry(**square_data)
+                    draw.rectangle(**geometry)
+
+            elif shape == "circle":
+                #  for square_x, square_y in squares:
+                    #  geometry = get_circle_geometry(x=square_x,
+                    #                                 y=square_y,
+                    #                                 spacing=spacing,
+                    #                                 square_size=square_size)
+                    geometry = get_circle_geometry(**square_data)
+                    draw.circle(**geometry) # origin, perimeter
 
         with Image(width=width,
                    height=height,
