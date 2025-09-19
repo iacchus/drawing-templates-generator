@@ -232,7 +232,7 @@ stroke_width_option = click.option("--stroke-width",
 epilog = f"""\
 Generates a template given the options.
 
-''--page' can be any of:
+'page' can be any of:
 
 {', '.join(PAPERSIZE_MAP.keys())}
 """
