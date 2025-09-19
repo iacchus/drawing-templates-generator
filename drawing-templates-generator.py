@@ -136,39 +136,47 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
 width_option = click.option("--width",
                             type=int,
                             default=1200,
+                            metavar="px",
+                            show_default=True,
                             help="Width for the generated png image")
 
 height_option = click.option("--height",
                              type=int,
                              default=2000,
-                            help="Height for the generated png image")
+                             show_default=True,
+                             help="Height for the generated png image")
 
 spacing_option = click.option("--spacing",
                               type=int,
                               default=33,
-                              help="Margin/padding between the shapes, in pixels (default: 33)")
+                              show_default=True,
+                              help="Margin/padding between the shapes, in pixels")
 
 columns_option = click.option("--columns",
                               type=int,
                               default=6,
-                              help="How many shapes to draw in a line (default: 6)")
+                              show_default=True,
+                              help="How many shapes to draw in a line")
 
 page_option = click.option("--page",
                            type=str,
                            default="a4",
-                           help="Page format for pdf (default: 'a4')")  # "a4" etc... type is Choice
+                           show_default=True,
+                           help="Page format for pdf")  # "a4" etc... type is Choice
 
 dpi_option = click.option("--dpi",
                           type=int,
                           default=288,
-                          help="Resolution for the pdf document (default: 288)")  # 72, 288 etc
+                          show_default=True,
+                          help="Resolution for the pdf document")  # 72, 288 etc
 
 square_option = click.option("--square",
                              "shape",
                              is_flag=True,
                              flag_value="square",
                              default="square",
-                             help="Use squares as shape (default)")
+                             show_default=True,
+                             help="Use squares as shape")
 
 circle_option = click.option("--circle",
                              "shape",
@@ -181,7 +189,8 @@ png_option = click.option("--png",
                           is_flag=True,
                           flag_value="png",
                           default="png",
-                          help="Generates a png image (default)")
+                          show_default=True,
+                          help="Generates a png image")
 
 pdf_option = click.option("--pdf",
                           "file_format",
@@ -191,22 +200,31 @@ pdf_option = click.option("--pdf",
 
 fill_color_option = click.option("--fill-color",
                                  type=str,
-                                 default="white")
+                                 default="white",
+                                  show_default=True,
+                                 help="Color to fill the shapes"
+                                 )
 
 stroke_color_option = click.option("--stroke-color",
                                    type=str,
-                                   default="black")
+                                   default="black",
+                                      show_default=True,
+                                   help="Color of the shapes' outlin4")
 
 background_color_option = click.option("--background-color",
                                        type=str,
-                                       default="white")
+                                       default="white",
+                                          show_default=True,
+                                       help="Background color of the page")
 
 stroke_width_option = click.option("--stroke-width",
                                    type=int,
-                                   default=2)
+                                   default=2,
+                                      show_default=True,
+                                   help="Width of the shapes' outline")
 
 
-@click.command(epilog="generate image")
+@click.command(help="cmd help",epilog="generate image",short_help="sht hlp",options_metavar="optss",no_args_is_help=True)
 @width_option
 @height_option
 @spacing_option
