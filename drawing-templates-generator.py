@@ -149,7 +149,7 @@ height_option = click.option("--height",
 
 spacing_option = click.option("--spacing",
                               type=int,
-                              default=33,
+                              default=11,
                               metavar="<spacing>",
                               show_default=True,
                               help="Margin/padding between the shapes, in pixels")
