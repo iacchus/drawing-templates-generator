@@ -181,13 +181,13 @@ square_option = click.option("--square",
                              flag_value="square",
                              default="square",
                              show_default=True,
-                             help="Use squares as shape")
+                             help="[shape] Use squares as shape")
 
 circle_option = click.option("--circle",
                              "shape",
                              is_flag=True,
                              flag_value="circle",
-                             help="Use circles as shape")
+                             help="[shape] Use circles as shape")
 
 png_option = click.option("--png",
                           "file_format",
@@ -195,13 +195,13 @@ png_option = click.option("--png",
                           flag_value="png",
                           default="png",
                           show_default=True,
-                          help="Generates a png image")
+                          help="[format] Generates a png image (for digital art)")
 
 pdf_option = click.option("--pdf",
                           "file_format",
                           is_flag=True,
                           flag_value="pdf",
-                          help="Generates a pdf document, useful for printing")
+                          help="[format] Generates a pdf document, useful for printing")
 
 fill_color_option = click.option("--fill-color",
                                  type=str,
@@ -243,6 +243,8 @@ Generates a template given the options.
 values or ImageMagick Color Names; these are described at:
 
 https://imagemagick.org/script/color.php
+
+<https://github.com/iacchus/drawing-templates-generator>
 """
 
 @click.command(help="Generate drawing templates in png (for digital art) and pdf (to be printed)",

@@ -4,9 +4,17 @@
 
 generates like this
 
+```
+./drawing-templates-generator.py --square --columns 6
+```
+
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/square-000.png?raw=true)
 
 and this
+
+```
+./drawing-templates-generator.py --circle --columns 8
+```
 
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-000.png?raw=true)
 
@@ -39,10 +47,12 @@ Options:
   --columns <num_of_cols>     How many shapes to draw in a line  [default: 6]
   --page <page_type>          Page format for pdf (see below)  [default: a4]
   --dpi <resolution>          Resolution for the pdf document  [default: 288]
-  --square                    Use squares as shape  [default: square]
-  --circle                    Use circles as shape
-  --png                       Generates a png image  [default: png]
-  --pdf                       Generates a pdf document, useful for printing
+  --square                    [shape] Use squares as shape  [default: square]
+  --circle                    [shape] Use circles as shape
+  --png                       [format] Generates a png image (for digital art)
+                              [default: png]
+  --pdf                       [format] Generates a pdf document, useful for
+                              printing
   --stroke-width <width>      Width of the shapes' outline  [default: 2]
   --stroke-color <color>      Color of the shapes' outline (see below)
                               [default: black]
@@ -68,4 +78,6 @@ Options:
   "#xxxxxx" values or ImageMagick Color Names; these are described at:
 
   https://imagemagick.org/script/color.php
+
+  <https://github.com/iacchus/drawing-templates-generator>
 ```
