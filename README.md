@@ -1,11 +1,11 @@
 generates like this
 
 
-![](https://github.com/iacchus/squared-template/blob/main/square.png?raw=true)
+![](https://github.com/iacchus/drawing-templates-generator/blob/main/square-000.png?raw=true)
 
 and this
 
-![](https://github.com/iacchus/squared-template/blob/main/circle.png?raw=true)
+![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-000.png?raw=true)
 
 ### dependencies:
 
