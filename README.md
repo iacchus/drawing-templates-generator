@@ -27,6 +27,12 @@ and this
 ```
 pip install wand click
 ```
+### features
+
+* can generate a template with squares or circles (for Loomis' style heads)
+* generates png, for digital art
+* generates pdf, for printing the template
+* colors can be changed (fill, outline and background)
 
 ### usage
 
