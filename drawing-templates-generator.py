@@ -17,6 +17,7 @@ def get_filename_number(filename):
 
     return number if number.isdecimal() else -1
 
+
 def create_filename(prefix, extension):
     filename_wildcard = f"{prefix}-*.{extension}"
     files = glob.glob(filename_wildcard)
@@ -27,6 +28,7 @@ def create_filename(prefix, extension):
     next_number_str = str(next_number).zfill(3)
     filename = f"{prefix}-{next_number_str}.{extension}"
     return filename
+
 
 def get_square_geometry(x, y, spacing, square_size):
     left = spacing * x + (x-1)*square_size
@@ -42,6 +44,7 @@ def get_square_geometry(x, y, spacing, square_size):
             )
 
     return geometry
+
 
 def get_circle_geometry(x, y, spacing, square_size):
     left = spacing * x + (x-1)*square_size
@@ -71,6 +74,7 @@ def get_square_size(page_size, spacing, columns):
     square_size = square_total_size / columns
 
     return square_size
+
 
 def get_max_lines(page_height, spacing, square_size):
     page_height_without_outer_margins = page_height - (spacing*2)
@@ -107,20 +111,10 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                square_size=square_size)
 
             if shape == "square":
-                #  for square_x, square_y in squares:
-                    #  geometry = get_square_geometry(x=square_x,
-                    #                                 y=square_y,
-                    #                                 spacing=spacing,
-                    #                                 square_size=square_size)
                     geometry = get_square_geometry(**square_data)
                     draw.rectangle(**geometry)
 
             elif shape == "circle":
-                #  for square_x, square_y in squares:
-                    #  geometry = get_circle_geometry(x=square_x,
-                    #                                 y=square_y,
-                    #                                 spacing=spacing,
-                    #                                 square_size=square_size)
                     geometry = get_circle_geometry(**square_data)
                     draw.circle(**geometry) # origin, perimeter
 
@@ -137,27 +131,80 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                 print("Created", file_format, "file", filename)
             else:
                 print("Error creating", filename)
-            #  image.save(filename='square.png')
 
 
-width_option = click.option("--width", type=int, default=1200)
-height_option = click.option("--height", type=int, default=2000)
-spacing_option = click.option("--spacing", type=int, default=33)
-columns_option = click.option("--columns", type=int, default=4)
-page_option = click.option("--page", type=str, default="a4")  # "a4" etc... type is Choice
-dpi_option = click.option("--dpi", type=int, default=288)  # 72, 288 etc
-#  shape_option = click.option("--shape", type=click.Choice(["square", "circle"], case_sensitive=False))  # square or circle
-square_option = click.option("--square", "shape", is_flag=True, flag_value="square", default="square")
-circle_option = click.option("--circle", "shape", is_flag=True, flag_value="circle")
-png_option = click.option("--png", "file_format", is_flag=True, flag_value="png", default="png")
-pdf_option = click.option("--pdf", "file_format", is_flag=True, flag_value="pdf")
-fill_color_option = click.option("--fill-color", type=str, default="white")
-stroke_color_option = click.option("--stroke-color", type=str, default="black")
-background_color_option = click.option("--background-color", type=str, default="white")
-stroke_width_option = click.option("--stroke-width", type=int, default=2)
-#  format_option = click.option()  # img or pdf
+width_option = click.option("--width",
+                            type=int,
+                            default=1200,
+                            help="Width for the generated png image")
 
-#  @template_generator.command(epilog="generate image")
+height_option = click.option("--height",
+                             type=int,
+                             default=2000,
+                            help="Height for the generated png image")
+
+spacing_option = click.option("--spacing",
+                              type=int,
+                              default=33,
+                              help="Margin/padding between the shapes, in pixels (default: 33)")
+
+columns_option = click.option("--columns",
+                              type=int,
+                              default=6,
+                              help="How many shapes to draw in a line (default: 6)")
+
+page_option = click.option("--page",
+                           type=str,
+                           default="a4",
+                           help="Page format for pdf (default: 'a4')")  # "a4" etc... type is Choice
+
+dpi_option = click.option("--dpi",
+                          type=int,
+                          default=288,
+                          help="Resolution for the pdf document (default: 288)")  # 72, 288 etc
+
+square_option = click.option("--square",
+                             "shape",
+                             is_flag=True,
+                             flag_value="square",
+                             default="square",
+                             help="Use squares as shape (default)")
+
+circle_option = click.option("--circle",
+                             "shape",
+                             is_flag=True,
+                             flag_value="circle",
+                             help="Use circles as shape")
+
+png_option = click.option("--png",
+                          "file_format",
+                          is_flag=True,
+                          flag_value="png",
+                          default="png",
+                          help="Generates a png image (default)")
+
+pdf_option = click.option("--pdf",
+                          "file_format",
+                          is_flag=True,
+                          flag_value="pdf",
+                          help="Generates a pdf document, useful for printing")
+
+fill_color_option = click.option("--fill-color",
+                                 type=str,
+                                 default="white")
+
+stroke_color_option = click.option("--stroke-color",
+                                   type=str,
+                                   default="black")
+
+background_color_option = click.option("--background-color",
+                                       type=str,
+                                       default="white")
+
+stroke_width_option = click.option("--stroke-width",
+                                   type=int,
+                                   default=2)
+
 
 @click.command(epilog="generate image")
 @width_option
