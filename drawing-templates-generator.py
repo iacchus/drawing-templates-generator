@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import glob
+from ntpath import isfile
+import os
 
 import click
 
@@ -22,10 +24,10 @@ from wand.color import Color
 #  filename_prefix = "square"
 #  filename_extension = "png"
 
-stroke_width = 2
-fill_color = Color("white")
-stroke_color = Color("black")
-background = Color("white")
+#  stroke_width = 2
+#  fill_color = Color("white")
+#  stroke_color = Color("black")
+#  background = Color("white")
 
 def get_filename_number(filename):
     filename_without_extension = filename.split(".")[0]
@@ -102,7 +104,9 @@ def get_max_lines(page_height, spacing, square_size):
 
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
-                   file_format):
+                   file_format, stroke_width, stroke_color, fill_color,
+                   background_color):
+
     with Drawing() as draw:
         draw.fill_color = fill_color
         draw.stroke_color = stroke_color
@@ -116,25 +120,33 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
 
         if shape == "square":
             for square_x, square_y in squares:
-                geometry = get_square_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
+                geometry = get_square_geometry(x=square_x,
+                                               y=square_y,
+                                               spacing=spacing,
+                                               square_size=square_size)
                 draw.rectangle(**geometry)
 
         elif shape == "circle":
-
             for square_x, square_y in squares:
-                geometry = get_circle_geometry(x=square_x, y=square_y, spacing=spacing, square_size=square_size)
+                geometry = get_circle_geometry(x=square_x,
+                                               y=square_y,
+                                               spacing=spacing,
+                                               square_size=square_size)
                 draw.circle(**geometry) # origin, perimeter
 
         with Image(width=width,
                    height=height,
-                   background=background,
+                   background=background_color,
                    resolution=resolution) as image:
             draw(image)
 
-            #  filename = create_filename(prefix=filename_prefix, extension=filename_extension)
             filename = create_filename(prefix=shape, extension=file_format)
 
             image.save(filename=filename)
+            if os.path.isfile(filename):
+                print("Created", file_format, "file", filename)
+            else:
+                print("Error creating", filename)
             #  image.save(filename='square.png')
 
 
@@ -149,6 +161,10 @@ square_option = click.option("--square", "shape", is_flag=True, flag_value="squa
 circle_option = click.option("--circle", "shape", is_flag=True, flag_value="circle")
 png_option = click.option("--png", "file_format", is_flag=True, flag_value="png", default="png")
 pdf_option = click.option("--pdf", "file_format", is_flag=True, flag_value="pdf")
+fill_color_option = click.option("--fill-color", type=str, default="white")
+stroke_color_option = click.option("--stroke-color", type=str, default="black")
+background_color_option = click.option("--background-color", type=str, default="white")
+stroke_width_option = click.option("--stroke-width", type=int, default=2)
 #  format_option = click.option()  # img or pdf
 
 #  @template_generator.command(epilog="generate image")
@@ -164,15 +180,19 @@ pdf_option = click.option("--pdf", "file_format", is_flag=True, flag_value="pdf"
 @circle_option
 @png_option
 @pdf_option
-def generate_template(width, height, spacing, columns, page, dpi, shape, file_format):
+@stroke_width_option
+@stroke_color_option
+@fill_color_option
+@background_color_option
+def generate_template(width, height, spacing, columns, page, dpi, shape,
+                      file_format, stroke_width, stroke_color, fill_color,
+                      background_color):
     resolution_factor = dpi / 72
 
     if file_format == "pdf":
         page_w, page_h = PAPERSIZE_MAP[page]  # this size is for 72dpi
-        #  page_w, page_h = PAPERSIZE_MAP["a4"]  # this size is for 72dpi
-        width = page_w * resolution_factor
-        height = page_h * resolution_factor
-        #  width, height = (page_w * 4, page_h * 4)
+        width = int(page_w * resolution_factor)
+        height = int(page_h * resolution_factor)
 
     draw_and_write(width=width,
                    height=height,
@@ -180,7 +200,11 @@ def generate_template(width, height, spacing, columns, page, dpi, shape, file_fo
                    columns=columns,
                    resolution=dpi,
                    shape=shape,
-                   file_format=file_format)
+                   file_format=file_format,
+                   stroke_width=stroke_width,
+                   stroke_color=Color(stroke_color),
+                   fill_color=Color(fill_color),
+                   background_color=Color(background_color))
 
 
 generate_template()
