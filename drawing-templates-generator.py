@@ -235,6 +235,9 @@ Generates a template given the options.
 'page' can be any of:
 
 {', '.join(PAPERSIZE_MAP.keys())}
+
+'stroke-color', 'fill-color' and 'background-color' can be hexadecimal "#xxxxxx"
+values or ImageMagick Color Names
 """
 
 @click.command(help="cmd help",
