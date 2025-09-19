@@ -237,7 +237,7 @@ Generates a template given the options.
 {', '.join(PAPERSIZE_MAP.keys())}
 
 'stroke-color', 'fill-color' and 'background-color' can be hexadecimal "#xxxxxx"
-values or ImageMagick Color Names
+values or ImageMagick Color Names https://imagemagick.org/script/color.php
 """
 
 @click.command(help="cmd help",
