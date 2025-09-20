@@ -192,6 +192,7 @@ circle_option = click.option("--circle",
                              "shape",
                              is_flag=True,
                              flag_value="circle",
+                             show_default=True,
                              help="[shape] Use circles as shape")
 
 png_option = click.option("--png",
@@ -207,6 +208,7 @@ pdf_option = click.option("--pdf",
                           "file_format",
                           is_flag=True,
                           flag_value="pdf",
+                          show_default=True,
                           help="[format] Generates a pdf document, "
                                "useful for printing")
 
