@@ -98,9 +98,11 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
         draw.stroke_color = stroke_color
         draw.stroke_width = stroke_width
 
-        square_size = get_square_size(page_size=width, spacing=spacing, columns=columns)
+        square_size = get_square_size(page_size=width, spacing=spacing,
+                                      columns=columns)
 
-        lines = get_max_lines(page_height=height, spacing=spacing, square_size=square_size)
+        lines = get_max_lines(page_height=height, spacing=spacing,
+                              square_size=square_size)
 
         squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
@@ -152,7 +154,8 @@ spacing_option = click.option("--spacing",
                               default=11,
                               metavar="<spacing>",
                               show_default=True,
-                              help="Margin/padding between the shapes, in pixels")
+                              help="Margin/padding between the shapes, "
+                                   "in pixels")
 
 columns_option = click.option("--columns",
                               type=int,
@@ -166,14 +169,16 @@ page_option = click.option("--page",
                            default="a4",
                            metavar="<page_type>",
                            show_default=True,
-                           help="Page format for pdf (see below)")  # "a4" etc... type is Choice
+                           help="Page format for pdf "
+                                "(see below)")  # "a4" etc... type is Choice
 
 dpi_option = click.option("--dpi",
                           type=int,
                           default=288,
                           metavar="<resolution>",
                           show_default=True,
-                          help="Resolution for the pdf document")  # 72, 288 etc
+                          help="Resolution for the pdf "
+                               "document")  # 72, 288 etc
 
 square_option = click.option("--square",
                              "shape",
@@ -195,13 +200,15 @@ png_option = click.option("--png",
                           flag_value="png",
                           default="png",
                           show_default=True,
-                          help="[format] Generates a png image (for digital art)")
+                          help="[format] Generates a png image "
+                               "(for digital art)")
 
 pdf_option = click.option("--pdf",
                           "file_format",
                           is_flag=True,
                           flag_value="pdf",
-                          help="[format] Generates a pdf document, useful for printing")
+                          help="[format] Generates a pdf document, "
+                               "useful for printing")
 
 fill_color_option = click.option("--fill-color",
                                  type=str,
@@ -216,14 +223,16 @@ stroke_color_option = click.option("--stroke-color",
                                    default="black",
                                    metavar="<color>",
                                    show_default=True,
-                                   help="Color of the shapes' outline (see below)")
+                                   help="Color of the shapes' outline "
+                                        "(see below)")
 
 background_color_option = click.option("--background-color",
                                        type=str,
                                        default="white",
                                        metavar="<color>",
                                        show_default=True,
-                                       help="Background color of the page (see below)")
+                                       help="Background color of the page "
+                                       "(see below)")
 
 stroke_width_option = click.option("--stroke-width",
                                    type=int,
@@ -239,7 +248,8 @@ Generates a template given the options.
 
 {', '.join(PAPERSIZE_MAP.keys())}
 
-'stroke-color', 'fill-color' and 'background-color' can be hexadecimal "#xxxxxx"
+'stroke-color', 'fill-color' and 'background-color' can be hexadecimal \
+"#xxxxxx"
 values or ImageMagick Color Names; these are described at:
 
 https://imagemagick.org/script/color.php
@@ -247,7 +257,8 @@ https://imagemagick.org/script/color.php
 <https://github.com/iacchus/drawing-templates-generator>
 """
 
-@click.command(help="Generate drawing templates in png (for digital art) and pdf (to be printed)",
+@click.command(help="Generate drawing templates in png (for digital art)"
+                    " and pdf (to be printed)",
                epilog=epilog,
                short_help="sht hlp",
                options_metavar="[options]",
