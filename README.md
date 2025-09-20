@@ -29,10 +29,12 @@ pip install wand click
 ```
 ### features
 
-* can generate a template with squares or circles (for Loomis' style heads)
+* generates a template with squares or circles (for Loomis' style heads)
 * generates png, for digital art
 * generates pdf, for printing the template
+* pdf paper size can be changed via a set of predefined sizes
 * colors can be changed (fill, outline and background)
+* template's margin/padding can be changed
 
 ### usage
 
