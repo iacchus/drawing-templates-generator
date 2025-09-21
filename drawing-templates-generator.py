@@ -47,10 +47,9 @@ def get_square_geometry(x, y, spacing, square_size):
 
 
 def get_circle_geometry(x, y, spacing, square_size):
-    left = spacing * x + (x-1)*square_size
+    interlacing_offset = (square_size/2) if (y % 2 == 0) else 0
+    left = spacing * x + (x-1)*square_size + interlacing_offset
     top = spacing * y + (y-1)*square_size
-    #  right = spacing * x + (x)*square_size
-    #  bottom = spacing * y + (y)*square_size
 
     origin_x = left + (square_size/2)
     origin_y = top + (square_size/2)
@@ -113,12 +112,14 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                square_size=square_size)
 
             if shape == "square":
-                    geometry = get_square_geometry(**square_data)
-                    draw.rectangle(**geometry)
+                geometry = get_square_geometry(**square_data)
+                draw.rectangle(**geometry)
 
             elif shape == "circle":
-                    geometry = get_circle_geometry(**square_data)
-                    draw.circle(**geometry) # origin, perimeter
+                if ((square_y % 2) == 0) and ((square_x) == columns):
+                    continue
+                geometry = get_circle_geometry(**square_data)
+                draw.circle(**geometry) # origin, perimeter
 
         with Image(width=width,
                    height=height,
