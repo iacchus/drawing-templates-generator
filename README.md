@@ -51,16 +51,18 @@ Options:
   --height <height>           Height for the generated png image  [default:
                               2000]
   --spacing <spacing>         Margin/padding between the shapes, in pixels
-                              [default: 33]
+                              [default: 11]
   --columns <num_of_cols>     How many shapes to draw in a line  [default: 6]
   --page <page_type>          Page format for pdf (see below)  [default: a4]
   --dpi <resolution>          Resolution for the pdf document  [default: 288]
   --square                    [shape] Use squares as shape  [default: square]
-  --circle                    [shape] Use circles as shape
+  --circle                    [shape] Use circles as shape  [default: square]
+  --dont-interlace            [--circle only] Don't interlace when using
+                              circles as shape; align all lines instead
   --png                       [format] Generates a png image (for digital art)
                               [default: png]
   --pdf                       [format] Generates a pdf document, useful for
-                              printing
+                              printing  [default: png]
   --stroke-width <width>      Width of the shapes' outline  [default: 2]
   --stroke-color <color>      Color of the shapes' outline (see below)
                               [default: black]
