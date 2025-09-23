@@ -46,8 +46,9 @@ def get_square_geometry(x, y, spacing, square_size):
     return geometry
 
 
-def get_circle_geometry(x, y, spacing, square_size):
-    interlacing_offset = (square_size/2) if (y % 2 == 0) else 0
+def get_circle_geometry(x, y, spacing, square_size, dont_interlace):
+    interlacing_offset = (square_size/2) if (y % 2 == 0) \
+                                            and not dont_interlace else 0
     left = spacing * x + (x-1)*square_size + interlacing_offset
     top = spacing * y + (y-1)*square_size
 
@@ -89,8 +90,8 @@ def get_max_lines(page_height, spacing, square_size):
 
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
-                   file_format, stroke_width, stroke_color, fill_color,
-                   background_color):
+                   dont_interlace, file_format, stroke_width, stroke_color,
+                   fill_color, background_color):
 
     with Drawing() as draw:
         draw.fill_color = fill_color
@@ -116,9 +117,11 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                 draw.rectangle(**geometry)
 
             elif shape == "circle":
-                if ((square_y % 2) == 0) and ((square_x) == columns):
+                if ((square_y % 2) == 0) and ((square_x) == columns) \
+                        and not dont_interlace:
                     continue
-                geometry = get_circle_geometry(**square_data)
+                geometry = get_circle_geometry(**square_data,
+                                               dont_interlace=dont_interlace)
                 draw.circle(**geometry) # origin, perimeter
 
         with Image(width=width,
@@ -188,6 +191,15 @@ square_option = click.option("--square",
                              default="square",
                              show_default=True,
                              help="[shape] Use squares as shape")
+
+dont_interlace_option = click.option("--dont-interlace",
+                             "dont_interlace",
+                             is_flag=True,
+                             flag_value=True,
+                             default=False,
+                             show_default=False,
+                             help="[--circle only] Don't interlace when using "
+                                  "circles as shape; align all lines instead")
 
 circle_option = click.option("--circle",
                              "shape",
@@ -274,6 +286,7 @@ https://imagemagick.org/script/color.php
 @dpi_option
 @square_option
 @circle_option
+@dont_interlace_option
 @png_option
 @pdf_option
 @stroke_width_option
@@ -281,8 +294,8 @@ https://imagemagick.org/script/color.php
 @fill_color_option
 @background_color_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
-                      file_format, stroke_width, stroke_color, fill_color,
-                      background_color):
+                      dont_interlace, file_format, stroke_width, stroke_color,
+                      fill_color, background_color):
     resolution_factor = dpi / 72
 
     if file_format == "pdf":
@@ -296,6 +309,7 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                    columns=columns,
                    resolution=dpi,
                    shape=shape,
+                   dont_interlace=dont_interlace,
                    file_format=file_format,
                    stroke_width=stroke_width,
                    stroke_color=Color(stroke_color),
