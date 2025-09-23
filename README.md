@@ -18,6 +18,14 @@ and this
 
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-000.png?raw=true)
 
+other
+
+```
+./drawing-templates-generator.py --circle --columns 6 --dont-interlace --spacing 33
+```
+
+![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-001.png?raw=true)
+
 ### dependencies
 
 * python3 with pip
