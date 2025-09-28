@@ -91,7 +91,7 @@ def get_max_lines(page_height, spacing, square_size):
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
                    dont_interlace, file_format, stroke_width, stroke_color,
-                   fill_color, background_color):
+                   fill_color, background_color, footer):
 
     with Drawing() as draw:
         draw.fill_color = fill_color
@@ -256,6 +256,12 @@ stroke_width_option = click.option("--stroke-width",
                                    show_default=True,
                                    help="Width of the shapes' outline")
 
+footer_option = click.option("--footer",
+                             is_flag=True,
+                             flag_value=True,
+                             show_default=True,
+                             default=False,
+                             help="Show footer")
 epilog = f"""\
 Generates a template given the options.
 
@@ -293,9 +299,10 @@ https://imagemagick.org/script/color.php
 @stroke_color_option
 @fill_color_option
 @background_color_option
+@footer_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
                       dont_interlace, file_format, stroke_width, stroke_color,
-                      fill_color, background_color):
+                      fill_color, background_color, footer):
     resolution_factor = dpi / 72
 
     if file_format == "pdf":
@@ -314,7 +321,8 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                    stroke_width=stroke_width,
                    stroke_color=Color(stroke_color),
                    fill_color=Color(fill_color),
-                   background_color=Color(background_color))
+                   background_color=Color(background_color),
+                   footer=footer)
 
 
 generate_template()
