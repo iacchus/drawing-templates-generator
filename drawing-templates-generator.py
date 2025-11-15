@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import glob
+import math
 import os
 
 import click
@@ -46,11 +47,28 @@ def get_square_geometry(x, y, spacing, square_size):
     return geometry
 
 
+def get_line_size(square_size, spacing):
+    #  cosene_in_radians = math.cos(30)
+    #  cosene_in_degrees = math.degrees(cosene_in_radians)
+    cosene_in_degrees = 0.86602540378
+    hypotenuse = square_size + spacing
+
+    # cos alpha = b/c
+    line_size = hypotenuse * cosene_in_degrees
+    #  line_size = hypotenuse * cosene_in_radians
+
+    return line_size
+
+
 def get_circle_geometry(x, y, spacing, square_size, dont_interlace):
+    line_size = get_line_size(square_size=square_size, spacing=spacing)
+
     interlacing_offset = (square_size/2) if (y % 2 == 0) \
                                             and not dont_interlace else 0
     left = spacing * x + (x-1)*square_size + interlacing_offset
-    top = spacing * y + (y-1)*square_size
+    #  top = spacing * y + (y-1)*square_size
+    #  top = spacing * y + (y-1)*line_size
+    top = (y-1) * line_size
 
     origin_x = left + (square_size/2)
     origin_y = top + (square_size/2)
