@@ -63,6 +63,7 @@ def get_square_geometry(x, y, spacing, square_size, dont_interlace,
                                             and not dont_interlace else 0
     left = spacing * x + (x-1)*square_size + interlacing_offset
     if equidistant:
+        #  top = spacing + (y-1)*line_size
         top = spacing + (y-1)*line_size
     else:
         top = spacing * y + (y-1)*square_size
@@ -93,6 +94,7 @@ def get_circle_geometry(x, y, spacing, square_size, dont_interlace,
     left = spacing * x + (x-1)*square_size + interlacing_offset
     if equidistant:
         top = spacing + (y-1)*line_size
+        top = spacing + (y-1)*line_size + 4  # FIXME: this +4
     else:
         top = spacing * y + (y-1)*square_size
 
