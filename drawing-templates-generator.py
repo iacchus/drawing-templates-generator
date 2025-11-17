@@ -11,7 +11,7 @@ from wand.image import PAPERSIZE_MAP
 from wand.drawing import Drawing
 from wand.color import Color
 
-DEBUG = True if os.environ["DEBUG"] else False
+DEBUG = True if os.environ.get("DEBUG") else False
 
 def get_filename_number(filename):
     filename_without_extension = filename.split(".")[0]
@@ -37,25 +37,6 @@ def create_filename(prefix, extension):
     return filename
 
 
-def get_square_geometry(x, y, spacing, square_size, dont_interlace):
-    interlacing_offset = (square_size/2) if (y % 2 == 0) \
-                                            and not dont_interlace else 0
-    left = spacing * x + (x-1)*square_size + interlacing_offset
-    #  left = spacing * x + (x-1)*square_size
-    top = spacing * y + (y-1)*square_size
-    right = spacing * x + interlacing_offset + (x)*square_size  # FIXME: ioffset order
-    bottom = spacing * y + (y)*square_size
-
-    geometry = dict(
-            left=left,
-            top=top,
-            right=right,
-            bottom=bottom
-            )
-
-    return geometry
-
-
 def get_line_size(square_size, spacing, equidistant):
 
     if equidistant:
@@ -73,6 +54,42 @@ def get_line_size(square_size, spacing, equidistant):
     return line_size
 
 
+def get_square_geometry(x, y, spacing, square_size, dont_interlace,
+                        equidistant):
+    line_size = get_line_size(square_size=square_size, spacing=spacing,
+                              equidistant=equidistant)
+
+    interlacing_offset = (square_size/2) if (y % 2 == 0) \
+                                            and not dont_interlace else 0
+    left = spacing * x + (x-1)*square_size + interlacing_offset
+    #  left = spacing * x + (x-1)*square_size
+    #  top = spacing * y + (y-1)*square_size
+    if equidistant:
+        #  top = (y-1) * line_size
+        #  top = spacing if (y == 0) else ((y-1) * line_size)
+        #  top = spacing if (y == 1) else ((y-1) * line_size)
+        top = spacing + (y-1)*line_size
+        #  top = spacing * y + (y-1)*line_size
+    else:
+        top = spacing * y + (y-1)*square_size
+
+    right = spacing * x + interlacing_offset + (x)*square_size  # FIXME: ioffset order
+    #  bottom = spacing * y + (y)*square_size
+    if equidistant:
+        bottom = spacing + (y)*line_size
+    else:
+        bottom = spacing * y + (y)*square_size
+
+    geometry = dict(
+            left=left,
+            top=top,
+            right=right,
+            bottom=bottom
+            )
+
+    return geometry
+
+
 def get_circle_geometry(x, y, spacing, square_size, dont_interlace,
                         equidistant):
     line_size = get_line_size(square_size=square_size, spacing=spacing,
@@ -84,7 +101,11 @@ def get_circle_geometry(x, y, spacing, square_size, dont_interlace,
     #  top = spacing * y + (y-1)*square_size
     #  top = spacing * y + (y-1)*line_size
     if equidistant:
-        top = (y-1) * line_size
+        #  top = (y-1) * line_size
+        #  top = spacing if (y == 0) else ((y-1) * line_size)
+        #  top = spacing if (y == 1) else ((y-1) * line_size)
+        top = spacing + (y-1)*line_size
+        #  top = spacing * y + (y-1)*line_size
     else:
         top = spacing * y + (y-1)*square_size
 
@@ -152,7 +173,9 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                square_size=square_size)
 
             if shape == "square":
-                square_geometry = get_square_geometry(**square_data)
+                square_geometry = get_square_geometry(**square_data,
+                                                      dont_interlace=dont_interlace,
+                                                      equidistant=equidistant)
                 draw.rectangle(**square_geometry)
 
             elif shape == "circle":
@@ -164,7 +187,8 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                                       equidistant=equidistant)
                 if DEBUG:
                     square_geometry = get_square_geometry(**square_data,
-                                               dont_interlace=dont_interlace)
+                                               dont_interlace=dont_interlace,
+                                                          equidistant=equidistant)
                     draw.rectangle(**square_geometry)
                 draw.circle(**circle_geometry) # origin, perimeter
 
