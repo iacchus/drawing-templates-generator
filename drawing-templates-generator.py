@@ -11,6 +11,7 @@ from wand.image import PAPERSIZE_MAP
 from wand.drawing import Drawing
 from wand.color import Color
 
+DEBUG = True if os.environ["DEBUG"] else False
 
 def get_filename_number(filename):
     filename_without_extension = filename.split(".")[0]
@@ -20,6 +21,11 @@ def get_filename_number(filename):
 
 
 def create_filename(prefix, extension):
+
+    if DEBUG:
+        filename = f"{prefix}-debug.{extension}"
+        return filename
+
     filename_wildcard = f"{prefix}-*.{extension}"
     files = glob.glob(filename_wildcard)
     numbers = [int(get_filename_number(filename)) for filename in files]
@@ -31,10 +37,13 @@ def create_filename(prefix, extension):
     return filename
 
 
-def get_square_geometry(x, y, spacing, square_size):
-    left = spacing * x + (x-1)*square_size
+def get_square_geometry(x, y, spacing, square_size, dont_interlace):
+    interlacing_offset = (square_size/2) if (y % 2 == 0) \
+                                            and not dont_interlace else 0
+    left = spacing * x + (x-1)*square_size + interlacing_offset
+    #  left = spacing * x + (x-1)*square_size
     top = spacing * y + (y-1)*square_size
-    right = spacing * x + (x)*square_size
+    right = spacing * x + interlacing_offset + (x)*square_size  # FIXME: ioffset order
     bottom = spacing * y + (y)*square_size
 
     geometry = dict(
@@ -47,27 +56,37 @@ def get_square_geometry(x, y, spacing, square_size):
     return geometry
 
 
-def get_line_size(square_size, spacing):
-    alpha_angle_degrees = 30
-    cosene = math.cos(math.radians(alpha_angle_degrees))
-    hypotenuse = square_size + spacing
+def get_line_size(square_size, spacing, equidistant):
 
-    # cos alpha = b/c
-    #  b = c * cos alpha
-    line_size = hypotenuse * cosene
+    if equidistant:
+        alpha_angle_degrees = 30
+        cosene = math.cos(math.radians(alpha_angle_degrees))
+        hypotenuse = square_size + spacing
+
+        # cos alpha = b/c
+        #  b = c * cos alpha
+        line_size = hypotenuse * cosene
+
+    else:
+        line_size = square_size + spacing
 
     return line_size
 
 
-def get_circle_geometry(x, y, spacing, square_size, dont_interlace):
-    line_size = get_line_size(square_size=square_size, spacing=spacing)
+def get_circle_geometry(x, y, spacing, square_size, dont_interlace,
+                        equidistant):
+    line_size = get_line_size(square_size=square_size, spacing=spacing,
+                              equidistant=equidistant)
 
     interlacing_offset = (square_size/2) if (y % 2 == 0) \
                                             and not dont_interlace else 0
     left = spacing * x + (x-1)*square_size + interlacing_offset
     #  top = spacing * y + (y-1)*square_size
     #  top = spacing * y + (y-1)*line_size
-    top = (y-1) * line_size
+    if equidistant:
+        top = (y-1) * line_size
+    else:
+        top = spacing * y + (y-1)*square_size
 
     origin_x = left + (square_size/2)
     origin_y = top + (square_size/2)
@@ -93,7 +112,8 @@ def get_square_size(page_size, spacing, columns):
     return square_size
 
 
-def get_max_lines(page_height, spacing, square_size):
+#  def get_max_lines(page_height, spacing, square_size):
+def get_max_lines(page_height, square_size, spacing, line_size):
     page_height_without_outer_margins = page_height - (spacing*2)
 
     count = 0
@@ -108,7 +128,7 @@ def get_max_lines(page_height, spacing, square_size):
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
                    dont_interlace, file_format, stroke_width, stroke_color,
-                   fill_color, background_color, footer):
+                   fill_color, background_color, equidistant, footer):
 
     with Drawing() as draw:
         draw.fill_color = fill_color
@@ -118,8 +138,10 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
         square_size = get_square_size(page_size=width, spacing=spacing,
                                       columns=columns)
 
+        line_size = get_line_size(square_size, spacing, equidistant)
+
         lines = get_max_lines(page_height=height, spacing=spacing,
-                              square_size=square_size)
+                              square_size=square_size, line_size=line_size)
 
         squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
@@ -130,16 +152,21 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                square_size=square_size)
 
             if shape == "square":
-                geometry = get_square_geometry(**square_data)
-                draw.rectangle(**geometry)
+                square_geometry = get_square_geometry(**square_data)
+                draw.rectangle(**square_geometry)
 
             elif shape == "circle":
                 if ((square_y % 2) == 0) and ((square_x) == columns) \
                         and not dont_interlace:
                     continue
-                geometry = get_circle_geometry(**square_data,
+                circle_geometry = get_circle_geometry(**square_data,
+                                               dont_interlace=dont_interlace,
+                                                      equidistant=equidistant)
+                if DEBUG:
+                    square_geometry = get_square_geometry(**square_data,
                                                dont_interlace=dont_interlace)
-                draw.circle(**geometry) # origin, perimeter
+                    draw.rectangle(**square_geometry)
+                draw.circle(**circle_geometry) # origin, perimeter
 
         with Image(width=width,
                    height=height,
@@ -147,6 +174,7 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                    resolution=resolution) as image:
             draw(image)
 
+            filename = create_filename(prefix=shape, extension=file_format)
             filename = create_filename(prefix=shape, extension=file_format)
 
             image.save(filename=filename)
@@ -209,14 +237,22 @@ square_option = click.option("--square",
                              show_default=True,
                              help="[shape] Use squares as shape")
 
-dont_interlace_option = click.option("--dont-interlace",
-                             "dont_interlace",
+dont_interlace_option = click.option("--dont-interlace", "dont_interlace",
                              is_flag=True,
                              flag_value=True,
                              default=False,
                              show_default=False,
                              help="[--circle only] Don't interlace when using "
                                   "circles as shape; align all lines instead")
+
+equidistant_option = click.option("--equidistant", "equidistant",
+                             is_flag=True,
+                             flag_value=True,
+                             #  flag_value=True,
+                             default=False,
+                             show_default=False,
+                             help="[--circle only] Make circles' origins "
+                                  "equidistant with the line below.")
 
 circle_option = click.option("--circle",
                              "shape",
@@ -310,6 +346,7 @@ https://imagemagick.org/script/color.php
 @square_option
 @circle_option
 @dont_interlace_option
+@equidistant_option
 @png_option
 @pdf_option
 @stroke_width_option
@@ -319,7 +356,7 @@ https://imagemagick.org/script/color.php
 @footer_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
                       dont_interlace, file_format, stroke_width, stroke_color,
-                      fill_color, background_color, footer):
+                      fill_color, background_color, equidistant, footer):
     resolution_factor = dpi / 72
 
     if file_format == "pdf":
@@ -334,6 +371,7 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                    resolution=dpi,
                    shape=shape,
                    dont_interlace=dont_interlace,
+                   equidistant=equidistant,
                    file_format=file_format,
                    stroke_width=stroke_width,
                    stroke_color=Color(stroke_color),
