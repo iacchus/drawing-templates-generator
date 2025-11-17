@@ -48,14 +48,13 @@ def get_square_geometry(x, y, spacing, square_size):
 
 
 def get_line_size(square_size, spacing):
-    #  cosene_in_radians = math.cos(30)
-    #  cosene_in_degrees = math.degrees(cosene_in_radians)
-    cosene_in_degrees = 0.86602540378
+    alpha_angle_degrees = 30
+    cosene = math.cos(math.radians(alpha_angle_degrees))
     hypotenuse = square_size + spacing
 
     # cos alpha = b/c
-    line_size = hypotenuse * cosene_in_degrees
-    #  line_size = hypotenuse * cosene_in_radians
+    #  b = c * cos alpha
+    line_size = hypotenuse * cosene
 
     return line_size
 
