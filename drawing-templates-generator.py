@@ -123,12 +123,14 @@ def get_square_size(page_size, spacing, columns):
 
 
 #  def get_max_lines(page_height, spacing, square_size):
-def get_max_lines(page_height, square_size, spacing, line_size, equidistant):
-    if equidistant:
-        #  page_height_without_outer_margins = page_height - spacing
-        page_height_without_outer_margins = page_height - (spacing*2)
-    else:
-        page_height_without_outer_margins = page_height - (spacing*2)
+#  def get_max_lines(page_height, square_size, spacing, line_size, equidistant):
+def get_max_lines(page_height, spacing, line_size):
+    page_height_without_outer_margins = page_height - (spacing*2)
+    #  if equidistant:
+    #      #  page_height_without_outer_margins = page_height - spacing
+    #      page_height_without_outer_margins = page_height - (spacing*2)
+    #  else:
+    #      page_height_without_outer_margins = page_height - (spacing*2)
 
     #  count = 0
     #  total_size = 0
