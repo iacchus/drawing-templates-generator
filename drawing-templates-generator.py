@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import enum
 import glob
 import math
 import os
@@ -66,7 +67,8 @@ def get_square_geometry(x, y, spacing, square_size, dont_interlace,
         #  top = spacing + (y-1)*line_size
         top = spacing + (y-1)*line_size
     else:
-        top = spacing * y + (y-1)*square_size
+        #  top = spacing * y + (y-1)*square_size
+        top = spacing * y + (y-1)*line_size
 
     right = spacing * x + interlacing_offset + (x)*square_size  # FIXME: ioffset order
     if equidistant:
@@ -122,24 +124,8 @@ def get_square_size(page_size, spacing, columns):
     return square_size
 
 
-#  def get_max_lines(page_height, spacing, square_size):
-#  def get_max_lines(page_height, square_size, spacing, line_size, equidistant):
 def get_max_lines(page_height, spacing, line_size):
     page_height_without_outer_margins = page_height - (spacing*2)
-    #  if equidistant:
-    #      #  page_height_without_outer_margins = page_height - spacing
-    #      page_height_without_outer_margins = page_height - (spacing*2)
-    #  else:
-    #      page_height_without_outer_margins = page_height - (spacing*2)
-
-    #  count = 0
-    #  total_size = 0
-    #
-    #  while total_size < page_height_without_outer_margins:
-    #      count += 1
-    #      total_size = (count * square_size) + ((count - 1) * spacing)
-    #
-    #  return count - 1
     max_lines = round(page_height_without_outer_margins / line_size)
 
     return max_lines
@@ -159,9 +145,11 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
 
         line_size = get_line_size(square_size, spacing, equidistant)
 
+        #  lines = get_max_lines(page_height=height, spacing=spacing,
+        #                        square_size=square_size, line_size=line_size,
+        #                        equidistant=equidistant)
         lines = get_max_lines(page_height=height, spacing=spacing,
-                              square_size=square_size, line_size=line_size,
-                              equidistant=equidistant)
+                              line_size=line_size)
 
         squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
@@ -172,6 +160,9 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                square_size=square_size)
 
             if shape == "square":
+                if ((square_y % 2) == 0) and ((square_x) == columns) \
+                        and not dont_interlace:
+                    continue
                 square_geometry = get_square_geometry(**square_data,
                                                       dont_interlace=dont_interlace,
                                                       equidistant=equidistant)
@@ -205,6 +196,12 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                 print("Created", file_format, "file", filename)
             else:
                 print("Error creating", filename)
+
+
+class BoolAuto(enum.Enum):
+    AUTO = enum.auto()
+    FALSE = enum.auto()
+    TRUE = enum.auto()
 
 
 width_option = click.option("--width",
@@ -260,19 +257,31 @@ square_option = click.option("--square",
                              show_default=True,
                              help="[shape] Use squares as shape")
 
-dont_interlace_option = click.option("--dont-interlace", "dont_interlace",
+dont_interlace_option = click.option("--dont-interlace", "dont_interlace_flag",
+                             type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
-                             flag_value=True,
-                             default=False,
+                             flag_value=BoolAuto.TRUE,
+                             default=BoolAuto.AUTO,
+                             #  flag_value=True,
+                             #  default=False,
                              show_default=False,
                              help="[--circle only] Don't interlace when using "
                                   "circles as shape; align all lines instead")
 
-equidistant_option = click.option("--equidistant", "equidistant",
+#  equidistant_option = click.option("--equidistant", "equidistant",
+#                               is_flag=True,
+#                               flag_value=True,
+#                               #  flag_value=True,
+#                               default=False,
+#                               show_default=False,
+#                               help="[--circle only] Make circles' origins "
+#                                    "equidistant with the line below.")
+equidistant_option = click.option("--equidistant", "equidistant_flag",
+                             type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
-                             flag_value=True,
+                             flag_value=BoolAuto.TRUE,
                              #  flag_value=True,
-                             default=False,
+                             default=BoolAuto.AUTO,
                              show_default=False,
                              help="[--circle only] Make circles' origins "
                                   "equidistant with the line below.")
@@ -378,9 +387,33 @@ https://imagemagick.org/script/color.php
 @background_color_option
 @footer_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
-                      dont_interlace, file_format, stroke_width, stroke_color,
-                      fill_color, background_color, equidistant, footer):
+                      dont_interlace_flag, file_format, stroke_width, stroke_color,
+                      fill_color, background_color, equidistant_flag, footer):
     resolution_factor = dpi / 72
+
+    dont_interlace = bool()
+    if dont_interlace_flag == BoolAuto.AUTO:
+        if shape == "square":
+            dont_interlace = True
+        elif shape == "circle":
+            dont_interlace = False
+    elif dont_interlace_flag == BoolAuto.TRUE:
+        dont_interlace = True
+    else:
+        dont_interlace = True
+
+    equidistant = bool()
+    if equidistant_flag == BoolAuto.AUTO:
+        if shape == "square":
+            equidistant = False
+        elif shape == "circle":
+            equidistant = True
+    elif equidistant_flag == BoolAuto.TRUE:
+        equidistant = True
+        dont_interlace = False
+    else:
+        equidistant = False
+
 
     if file_format == "pdf":
         page_w, page_h = PAPERSIZE_MAP[page]  # this size is for 72dpi
