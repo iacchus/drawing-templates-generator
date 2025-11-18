@@ -123,17 +123,24 @@ def get_square_size(page_size, spacing, columns):
 
 
 #  def get_max_lines(page_height, spacing, square_size):
-def get_max_lines(page_height, square_size, spacing, line_size):
-    page_height_without_outer_margins = page_height - (spacing*2)
+def get_max_lines(page_height, square_size, spacing, line_size, equidistant):
+    if equidistant:
+        #  page_height_without_outer_margins = page_height - spacing
+        page_height_without_outer_margins = page_height - (spacing*2)
+    else:
+        page_height_without_outer_margins = page_height - (spacing*2)
 
-    count = 0
-    total_size = 0
+    #  count = 0
+    #  total_size = 0
+    #
+    #  while total_size < page_height_without_outer_margins:
+    #      count += 1
+    #      total_size = (count * square_size) + ((count - 1) * spacing)
+    #
+    #  return count - 1
+    max_lines = round(page_height_without_outer_margins / line_size)
 
-    while total_size < page_height_without_outer_margins:
-        count += 1
-        total_size = (count * square_size) + ((count - 1) * spacing)
-
-    return count - 1
+    return max_lines
 
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
@@ -151,7 +158,8 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
         line_size = get_line_size(square_size, spacing, equidistant)
 
         lines = get_max_lines(page_height=height, spacing=spacing,
-                              square_size=square_size, line_size=line_size)
+                              square_size=square_size, line_size=line_size,
+                              equidistant=equidistant)
 
         squares = [(x+1, y+1) for x in range(columns) for y in range(lines)]
 
