@@ -260,32 +260,32 @@ square_option = click.option("--square",
 dont_interlace_option = click.option("--dont-interlace", "dont_interlace_flag",
                              type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
-                             flag_value=BoolAuto.TRUE,
-                             default=BoolAuto.AUTO,
-                             #  flag_value=True,
-                             #  default=False,
+                             #  flag_value=BoolAuto.TRUE,
+                             #  default=BoolAuto.AUTO,
+                             flag_value=True,
+                             default=False,
                              show_default=False,
                              help="[--circle only] Don't interlace when using "
                                   "circles as shape; align all lines instead")
 
-#  equidistant_option = click.option("--equidistant", "equidistant",
-#                               is_flag=True,
-#                               flag_value=True,
-#                               #  flag_value=True,
-#                               default=False,
-#                               show_default=False,
-#                               help="[--circle only] Make circles' origins "
-#                                    "equidistant with the line below.")
 equidistant_option = click.option("--equidistant", "equidistant_flag",
-                             type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
-                             flag_value=BoolAuto.TRUE,
+                             flag_value=True,
                              #  flag_value=True,
-                             default=BoolAuto.AUTO,
+                             default=False,
                              show_default=False,
                              help="[--circle only] Make circles' origins "
                                   "equidistant with the line below.")
-
+#  equidistant_option = click.option("--equidistant", "equidistant_flag",
+#                               type=click.Choice(BoolAuto, case_sensitive=False),
+#                               is_flag=True,
+#                               flag_value=BoolAuto.TRUE,
+#                               #  flag_value=True,
+#                               default=BoolAuto.AUTO,
+#                               show_default=False,
+#                               help="[--circle only] Make circles' origins "
+#                                    "equidistant with the line below.")
+#
 circle_option = click.option("--circle",
                              "shape",
                              is_flag=True,
@@ -391,28 +391,47 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                       fill_color, background_color, equidistant_flag, footer):
     resolution_factor = dpi / 72
 
+    #  print(dont_interlace_flag)
+    #  dont_interlace = bool()
+    #  if dont_interlace_flag == BoolAuto.AUTO:
+    #      if shape == "square":
+    #          dont_interlace = True
+    #      elif shape == "circle":
+    #          dont_interlace = False
+    #  elif dont_interlace_flag == BoolAuto.TRUE:
+    #      dont_interlace = True
+    #  else:
+    #      dont_interlace = True
+    print(dont_interlace_flag)
     dont_interlace = bool()
-    if dont_interlace_flag == BoolAuto.AUTO:
+    if not dont_interlace_flag:
         if shape == "square":
             dont_interlace = True
         elif shape == "circle":
             dont_interlace = False
-    elif dont_interlace_flag == BoolAuto.TRUE:
-        dont_interlace = True
     else:
         dont_interlace = True
 
+    #  equidistant = bool()
+    #  if equidistant_flag == BoolAuto.AUTO:
+    #      if shape == "square":
+    #          equidistant = False
+    #      elif shape == "circle":
+    #          equidistant = True
+    #  elif equidistant_flag == BoolAuto.TRUE:
+    #      equidistant = True
+    #      dont_interlace = False
+    #  else:
+    #      equidistant = False
     equidistant = bool()
-    if equidistant_flag == BoolAuto.AUTO:
+    if not equidistant_flag:
         if shape == "square":
             equidistant = False
         elif shape == "circle":
             equidistant = True
-    elif equidistant_flag == BoolAuto.TRUE:
-        equidistant = True
-        dont_interlace = False
     else:
-        equidistant = False
+        equidistant = True  # FIXME
+        #  equidistant = False  # FIXME
 
 
     if file_format == "pdf":
