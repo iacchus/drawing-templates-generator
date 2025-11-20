@@ -68,13 +68,21 @@ def get_square_geometry(x, y, spacing, square_size, dont_interlace,
         top = spacing + (y-1)*line_size
     else:
         #  top = spacing * y + (y-1)*square_size
-        top = spacing * y + (y-1)*line_size
+        #  top = spacing * y + (y-1)*line_size
+        if y == 1:
+            top = spacing
+        else:
+            top = spacing + (y-1) * line_size
 
     right = spacing * x + interlacing_offset + (x)*square_size  # FIXME: ioffset order
     if equidistant:
         bottom = spacing + (y)*line_size
     else:
-        bottom = spacing * y + (y)*square_size
+        if y == 1:
+            bottom = spacing + square_size
+        else:
+            #  bottom = spacing * y + (y)*square_size
+            bottom = spacing + (y-1) * line_size + square_size
 
     geometry = dict(
             left=left,
@@ -133,7 +141,8 @@ def get_max_lines(page_height, spacing, line_size):
 
 def draw_and_write(width, height, spacing, columns, resolution, shape,
                    dont_interlace, file_format, stroke_width, stroke_color,
-                   fill_color, background_color, equidistant, footer):
+                   fill_color, background_color, equidistant, filename,
+                   footer):
 
     with Drawing() as draw:
         draw.fill_color = fill_color
@@ -188,8 +197,9 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                    resolution=resolution) as image:
             draw(image)
 
-            filename = create_filename(prefix=shape, extension=file_format)
-            filename = create_filename(prefix=shape, extension=file_format)
+            if filename == "":
+                filename = create_filename(prefix=shape, extension=file_format)
+            # else filename = filename
 
             image.save(filename=filename)
             if os.path.isfile(filename):
@@ -198,10 +208,10 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                 print("Error creating", filename)
 
 
-class BoolAuto(enum.Enum):
-    AUTO = enum.auto()
-    FALSE = enum.auto()
-    TRUE = enum.auto()
+#  class BoolAuto(enum.Enum):
+#      AUTO = enum.auto()
+#      FALSE = enum.auto()
+#      TRUE = enum.auto()
 
 
 width_option = click.option("--width",
@@ -258,7 +268,7 @@ square_option = click.option("--square",
                              help="[shape] Use squares as shape")
 
 dont_interlace_option = click.option("--dont-interlace", "dont_interlace_flag",
-                             type=click.Choice(BoolAuto, case_sensitive=False),
+                             #  type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
                              #  flag_value=BoolAuto.TRUE,
                              #  default=BoolAuto.AUTO,
@@ -341,6 +351,14 @@ stroke_width_option = click.option("--stroke-width",
                                    show_default=True,
                                    help="Width of the shapes' outline")
 
+filename_option = click.option("--filename",
+                              type=str,
+                              default="",
+                              metavar="<filename>",
+                              show_default=False,
+                              help="Choose a filename different from the "
+                                   "default one.")
+
 footer_option = click.option("--footer",
                              is_flag=True,
                              flag_value=True,
@@ -385,10 +403,12 @@ https://imagemagick.org/script/color.php
 @stroke_color_option
 @fill_color_option
 @background_color_option
+@filename_option 
 @footer_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
                       dont_interlace_flag, file_format, stroke_width, stroke_color,
-                      fill_color, background_color, equidistant_flag, footer):
+                      fill_color, background_color, equidistant_flag, filename,
+                      footer):
     resolution_factor = dpi / 72
 
     #  print(dont_interlace_flag)
@@ -452,6 +472,7 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                    stroke_color=Color(stroke_color),
                    fill_color=Color(fill_color),
                    background_color=Color(background_color),
+                   filename=filename,
                    footer=footer)
 
 
