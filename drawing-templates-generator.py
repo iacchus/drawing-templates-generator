@@ -63,11 +63,8 @@ def get_square_geometry(x, y, spacing, square_size, dont_interlace,
                                             and not dont_interlace else 0
     left = spacing * x + (x-1)*square_size + interlacing_offset
     if equidistant:
-        #  top = spacing + (y-1)*line_size
         top = spacing + (y-1)*line_size
     else:
-        #  top = spacing * y + (y-1)*square_size
-        #  top = spacing * y + (y-1)*line_size
         if y == 1:
             top = spacing
         else:
@@ -80,7 +77,6 @@ def get_square_geometry(x, y, spacing, square_size, dont_interlace,
         if y == 1:
             bottom = spacing + square_size
         else:
-            #  bottom = spacing * y + (y)*square_size
             bottom = spacing + (y-1) * line_size + square_size
 
     geometry = dict(
@@ -133,7 +129,6 @@ def get_square_size(page_size, spacing, columns):
 
 def get_max_lines(page_height, spacing, line_size):
     page_height_without_outer_margins = page_height - (spacing*2)
-    #  max_lines = round(page_height_without_outer_margins / line_size)
     max_lines = int(page_height_without_outer_margins / line_size)  # floor
 
     return max_lines
@@ -154,11 +149,6 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
 
         line_size = get_line_size(square_size, spacing, equidistant)
 
-        print(line_size)
-
-        #  lines = get_max_lines(page_height=height, spacing=spacing,
-        #                        square_size=square_size, line_size=line_size,
-        #                        equidistant=equidistant)
         lines = get_max_lines(page_height=height, spacing=spacing,
                               line_size=line_size)
 
@@ -264,10 +254,7 @@ square_option = click.option("--square",
                              help="[shape] Use squares as shape")
 
 dont_interlace_option = click.option("--dont-interlace", "dont_interlace_flag",
-                             #  type=click.Choice(BoolAuto, case_sensitive=False),
                              is_flag=True,
-                             #  flag_value=BoolAuto.TRUE,
-                             #  default=BoolAuto.AUTO,
                              flag_value=True,
                              default=False,
                              show_default=False,
@@ -399,7 +386,7 @@ https://imagemagick.org/script/color.php
 @stroke_color_option
 @fill_color_option
 @background_color_option
-@filename_option 
+@filename_option
 @footer_option
 def generate_template(width, height, spacing, columns, page, dpi, shape,
                       dont_interlace_flag, file_format, stroke_width, stroke_color,
@@ -407,17 +394,6 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                       footer):
     resolution_factor = dpi / 72
 
-    #  print(dont_interlace_flag)
-    #  dont_interlace = bool()
-    #  if dont_interlace_flag == BoolAuto.AUTO:
-    #      if shape == "square":
-    #          dont_interlace = True
-    #      elif shape == "circle":
-    #          dont_interlace = False
-    #  elif dont_interlace_flag == BoolAuto.TRUE:
-    #      dont_interlace = True
-    #  else:
-    #      dont_interlace = True
     print(dont_interlace_flag)
     dont_interlace = bool()
     if not dont_interlace_flag:
@@ -428,17 +404,6 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
     else:
         dont_interlace = True
 
-    #  equidistant = bool()
-    #  if equidistant_flag == BoolAuto.AUTO:
-    #      if shape == "square":
-    #          equidistant = False
-    #      elif shape == "circle":
-    #          equidistant = True
-    #  elif equidistant_flag == BoolAuto.TRUE:
-    #      equidistant = True
-    #      dont_interlace = False
-    #  else:
-    #      equidistant = False
     equidistant = bool()
     if not equidistant_flag:
         if shape == "square":
