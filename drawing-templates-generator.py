@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-#  import enum
 import glob
 import math
 import os
@@ -134,7 +133,8 @@ def get_square_size(page_size, spacing, columns):
 
 def get_max_lines(page_height, spacing, line_size):
     page_height_without_outer_margins = page_height - (spacing*2)
-    max_lines = round(page_height_without_outer_margins / line_size)
+    #  max_lines = round(page_height_without_outer_margins / line_size)
+    max_lines = int(page_height_without_outer_margins / line_size)  # floor
 
     return max_lines
 
@@ -208,12 +208,6 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                 print("Created", file_format, "file", filename)
             else:
                 print("Error creating", filename)
-
-
-#  class BoolAuto(enum.Enum):
-#      AUTO = enum.auto()
-#      FALSE = enum.auto()
-#      TRUE = enum.auto()
 
 
 width_option = click.option("--width",
