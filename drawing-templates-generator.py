@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import enum
+#  import enum
 import glob
 import math
 import os
@@ -153,6 +153,8 @@ def draw_and_write(width, height, spacing, columns, resolution, shape,
                                       columns=columns)
 
         line_size = get_line_size(square_size, spacing, equidistant)
+
+        print(line_size)
 
         #  lines = get_max_lines(page_height=height, spacing=spacing,
         #                        square_size=square_size, line_size=line_size,
