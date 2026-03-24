@@ -394,7 +394,6 @@ def generate_template(width, height, spacing, columns, page, dpi, shape,
                       footer):
     resolution_factor = dpi / 72
 
-    print(dont_interlace_flag)
     dont_interlace = bool()
     if not dont_interlace_flag:
         if shape == "square":

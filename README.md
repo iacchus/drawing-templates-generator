@@ -2,7 +2,7 @@
 
 ### WAT
 
-generates like this
+here are some examples
 
 ```
 ./drawing-templates-generator.py --square --columns 6
@@ -10,7 +10,7 @@ generates like this
 
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/square-000.png?raw=true)
 
-and this
+---
 
 ```
 ./drawing-templates-generator.py --circle --columns 8
@@ -18,13 +18,21 @@ and this
 
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-000.png?raw=true)
 
-other
+---
 
 ```
 ./drawing-templates-generator.py --circle --columns 6 --dont-interlace --spacing 33
 ```
 
 ![](https://github.com/iacchus/drawing-templates-generator/blob/main/circle-001.png?raw=true)
+
+---
+
+```
+./drawing-templates-generator.py --square --columns 7 --spacing=0 --stroke-width 1 --stroke-color "#000000"
+```
+
+![](https://github.com/iacchus/drawing-templates-generator/blob/main/square-001.png?raw=true)
 
 ### dependencies
 
